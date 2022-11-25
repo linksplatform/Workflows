@@ -88,11 +88,11 @@ jobs:
           wget "$SCRIPTS_BASE_URL/publish-cpp-release.sh"
           bash ./publish-cpp-release.sh
   get_package_info:
-    uses: linksplatform/Workflows/.github/workflows/get-cpp-package-info.yml
+    uses: linksplatform/Workflows/.github/workflows/get-cpp-package-info.yml@main
   get_conan_package_info:
-    uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml
+    uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
   push_to_conan:
-    uses: linksplatform/Workflows/.github/workflows/push_to_conan.yml
+    uses: linksplatform/Workflows/.github/workflows/push_to_conan.yml@main
   update_conan_dependants:
     runs-on: ubuntu-latest
     needs: [push_to_conan, get_conan_package_info]
