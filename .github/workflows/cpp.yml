@@ -10,7 +10,7 @@ on:
 
 env:
   SCRIPTS_BASE_URL: https://raw.githubusercontent.com/linksplatform/Scripts/main/MultiProjectRepository
-  REPOSITORY_NAME: $(basename ${{ github.repository }})
+  REPOSITORY_NAME: ${{$(basename  github.repository )}}
 
 defaults:
   run:
@@ -65,11 +65,11 @@ jobs:
         run: |
           sudo apt-get install nuget
 
-          CPP_PACKAGE_NUSPEC_DIRECTORY=$(dirname "${{needs.get_package_info.nuspec_path}}")
+          CPP_PACKAGE_NUSPEC_DIRECTORY=$(dirname "${{needs.get_package_info.outputs.nuspec_path}}")
           echo "CPP_PACKAGE_NUSPEC_DIRECTORY: ${CPP_PACKAGE_NUSPEC_DIRECTORY}"
 
           # Ensure NuGet package does not exist
-          NuGetPackageUrl="https://globalcdn.nuget.org/packages/Platform.$REPOSITORY_NAME.TemplateLibrary.${{needs.get_package_info.version}}.nupkg"
+          NuGetPackageUrl="https://globalcdn.nuget.org/packages/Platform.$REPOSITORY_NAME.TemplateLibrary.${{needs.get_package_info.outputs.version}}.nupkg"
           NuGetPackageUrl=$(echo "$NuGetPackageUrl" | tr '[:upper:]' '[:lower:]')
           NuGetPageStatus="$(curl -Is "$NuGetPackageUrl" | head -1)"
           StatusContents=( $NuGetPageStatus )
@@ -86,8 +86,8 @@ jobs:
 
           # Update .nuspec file
           IFS=$'\n' #Set Separator.
-          files=$(find $(dirname ${{needs.get_package_info.nuspec_path}}) | grep "\.h" | grep -v "bin" | grep -v "obj" | cut -c $(( $(echo $(dirname ${{needs.get_package_info.nuspec_path}}) | wc -m) + 1))-)
-          filename="${{needs.get_package_info.nuspec_path}}"
+          files=$(find $(dirname ${{needs.get_package_info.outputs.nuspec_path}}) | grep "\.h" | grep -v "bin" | grep -v "obj" | cut -c $(( $(echo $(dirname ${{needs.get_package_info.outputs.nuspec_path}}) | wc -m) + 1))-)
+          filename="${{needs.get_package_info.outputs.nuspec_path}}"
           file=($(cat $filename)) #Read file by line in array
           unset file[-1] #Remove last element in array.
           file+=("  <files>")
@@ -102,7 +102,7 @@ jobs:
           printf '%s\n' "${file[@]}" > "$filename" #Write array by line to .nuspec file.
 
           # Pack NuGet package by .nuspec file
-          nuget pack "${{needs.get_package_info.nuspec_path}}"
+          nuget pack "${{needs.get_package_info.outputs.nuspec_path}}"
 
           # Push NuGet package
           nuget push ./**/*.nupkg -NoSymbols -Source https://api.nuget.org/v3/index.json -ApiKey "${{secrets.NUGETTOKEN}}" 
@@ -116,12 +116,12 @@ jobs:
       - name: Create Release
         uses: ncipollo/release-action@v1.11.2
         with:
-          tag: "cpp_${{needs.get_package_info.version}}"
-          name: "[C++] ${{needs.get_package_info.version}}"
+          tag: "cpp_${{needs.get_package_info.outputs.version}}"
+          name: "[C++] ${{needs.get_package_info.outputs.version}}"
           body: >
-            https://www.nuget.org/packages/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary/${{needs.get_package_info.version}}
+            https://www.nuget.org/packages/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary/${{needs.get_package_info.outputs.version}}
             
-            ${{needs.get_package_info.release_notes}}
+            ${{needs.get_package_info.outputs.release_notes}}
   get_conan_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
   push_to_conan:
