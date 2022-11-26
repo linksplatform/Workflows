@@ -5,8 +5,8 @@ on:
     secrets:
       NUGETTOKEN:
         required: true
-      GITHUB_TOKEN:
-        required: true
+#       GITHUB_TOKEN:
+#         required: true
 
 env:
   SCRIPTS_BASE_URL: https://raw.githubusercontent.com/linksplatform/Scripts/main/MultiProjectRepository
