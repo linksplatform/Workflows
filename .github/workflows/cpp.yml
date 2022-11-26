@@ -120,6 +120,7 @@ jobs:
           body: >
             https://www.nuget.org/packages/Platform.${{github.event.repository.name}}.TemplateLibrary/${{needs.get_package_info.outputs.version}}
             
+            
             ${{needs.get_package_info.outputs.release_notes}}
   get_conan_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
