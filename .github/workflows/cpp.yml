@@ -64,7 +64,7 @@ jobs:
       - name: Push to nuget
         run: |
           sudo apt-get install nuget
-
+          echo "nuspec path from get_package_info job: ${{needs.get_package_info.outputs.nuspec_path}}"
           nuspec_direction=$(dirname ${{needs.get_package_info.outputs.nuspec_path}})
           echo "nuspec_direction: ${nuspec_direction}"
 
