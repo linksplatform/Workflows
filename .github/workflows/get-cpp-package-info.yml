@@ -12,7 +12,7 @@ on:
         value: ${{ jobs.get_cpp_package_info.outputs.release_notes }}
         
 env:
-  REPOSITORY_NAME: basename ${{ github.repository }}
+  REPOSITORY_NAME: $(basename ${{ github.repository }})
         
 jobs:
   get_cpp_package_info:
