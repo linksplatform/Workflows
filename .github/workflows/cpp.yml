@@ -65,8 +65,8 @@ jobs:
         run: |
           sudo apt-get install nuget
 
-          CPP_PACKAGE_NUSPEC_DIRECTORY=$(dirname "${{needs.get_package_info.outputs.nuspec_path}}")
-          echo "CPP_PACKAGE_NUSPEC_DIRECTORY: ${CPP_PACKAGE_NUSPEC_DIRECTORY}"
+          nuspec_direction=$(dirname ${{needs.get_package_info.outputs.nuspec_path}})
+          echo "nuspec_direction: ${nuspec_direction}"
 
           # Ensure NuGet package does not exist
           NuGetPackageUrl="https://globalcdn.nuget.org/packages/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.${{needs.get_package_info.outputs.version}}.nupkg"
@@ -79,14 +79,14 @@ jobs:
           fi
 
           # Download icon.png for the package
-          wget -O "$CPP_PACKAGE_NUSPEC_DIRECTORY/icon.png" https://raw.githubusercontent.com/linksplatform/Documentation/18469f4d033ee9a5b7b84caab9c585acab2ac519/doc/Avatar-rainbow-icon-64x64.png
+          wget -O "$nuspec_direction/icon.png" https://raw.githubusercontent.com/linksplatform/Documentation/18469f4d033ee9a5b7b84caab9c585acab2ac519/doc/Avatar-rainbow-icon-64x64.png
 
           # Download TemplateLibrary.targets for the package
-          wget -O "$CPP_PACKAGE_NUSPEC_DIRECTORY/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.targets" https://raw.githubusercontent.com/linksplatform/Files/ed0dc702f52d56d80ea2f19c93df5cf2fdcbccbf/TemplateLibrary.targets
+          wget -O "$nuspec_direction/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.targets" https://raw.githubusercontent.com/linksplatform/Files/ed0dc702f52d56d80ea2f19c93df5cf2fdcbccbf/TemplateLibrary.targets
 
           # Update .nuspec file
           IFS=$'\n' #Set Separator.
-          files=$(find $(dirname ${{needs.get_package_info.outputs.nuspec_path}}) | grep "\.h" | grep -v "bin" | grep -v "obj" | cut -c $(( $(echo $(dirname ${{needs.get_package_info.outputs.nuspec_path}}) | wc -m) + 1))-)
+          files=$(find $nuspec_direction | grep "\.h" | grep -v "bin" | grep -v "obj" | cut -c $(( $(echo $nuspec_direction | wc -m) + 1))-)
           filename="${{needs.get_package_info.outputs.nuspec_path}}"
           file=($(cat $filename)) #Read file by line in array
           unset file[-1] #Remove last element in array.
