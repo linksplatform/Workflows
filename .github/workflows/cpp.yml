@@ -125,8 +125,10 @@ jobs:
   get_conan_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
   push_to_conan:
-    needs: [publishRelease]
-    uses: linksplatform/Workflows/.github/workflows/push_to_conan.yml@main
+    needs: [publishRelease, get_conan_package_info]
+    uses: linksplatform/Workflows/.github/workflows/push-to-conan.yml@main
+    with:
+      name: ${{needs.get_conan_package_info.outputs.name}}
   update_conan_dependants:
     runs-on: ubuntu-latest
     needs: [push_to_conan, get_conan_package_info]
