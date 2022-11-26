@@ -29,8 +29,8 @@ jobs:
       - name: Setup conan
         run: |
           conan profile new linksplatform --detect
-          conan profile update settings.compiler=clang linksplatform
-          conan profile update settings.compiler.version=13 linksplatform
+          conan profile update settings.compiler=gcc linksplatform
+          conan profile update settings.compiler.version=11 linksplatform
           conan profile update settings.compiler.libcxx=libstdc++11 linksplatform
           conan profile update env.CXX=clang++ linksplatform
           conan profile show linksplatform
@@ -92,6 +92,7 @@ jobs:
   get_conan_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
   push_to_conan:
+    needs: [publishRelease]
     uses: linksplatform/Workflows/.github/workflows/push_to_conan.yml@main
   update_conan_dependants:
     runs-on: ubuntu-latest
