@@ -18,7 +18,7 @@ jobs:
   get_cpp_package_info:
     runs-on: ubuntu-latest
     outputs: 
-      nuspec_path: ${{steps.get_package_name.package_name}}
+      nuspec_path: ${{steps.get_package_name.get_nuspec_path}}
       version: ${{steps.get_version.version}}
       release_notes: ${{steps.get_release_notes.release_notes}}
     steps:
