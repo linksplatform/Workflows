@@ -18,9 +18,9 @@ jobs:
   get_cpp_package_info:
     runs-on: ubuntu-latest
     outputs: 
-      nuspec_path: ${{steps.get_package_name.get_nuspec_path}}
-      version: ${{steps.get_version.version}}
-      release_notes: ${{steps.get_release_notes.release_notes}}
+      nuspec_path: ${{steps.get_package_name.outputs.get_nuspec_path}}
+      version: ${{steps.get_version.outputs.version}}
+      release_notes: ${{steps.get_release_notes.outputs.release_notes}}
     steps:
       - uses: actions/checkout@v1
         with:
