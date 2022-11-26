@@ -18,4 +18,5 @@ jobs:
         id: get_name
         run: |
           name="platform.$(echo ${{env.REPOSITORY_NAME}} | tr '[:upper:]' '[:lower:]')"
-          echo "name=${package_name}" >> $GITHUB_OUTPUT
+          echo "name=${name}"
+          echo "name=${name}" >> $GITHUB_OUTPUT
