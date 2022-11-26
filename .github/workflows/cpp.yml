@@ -10,7 +10,6 @@ on:
 
 env:
   SCRIPTS_BASE_URL: https://raw.githubusercontent.com/linksplatform/Scripts/main/MultiProjectRepository
-  REPOSITORY_NAME: $(basename ${{ github.repository }})
 
 defaults:
   run:
@@ -69,7 +68,7 @@ jobs:
           echo "nuspec_direction: ${nuspec_direction}"
 
           # Ensure NuGet package does not exist
-          NuGetPackageUrl="https://globalcdn.nuget.org/packages/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.${{needs.get_package_info.outputs.version}}.nupkg"
+          NuGetPackageUrl="https://globalcdn.nuget.org/packages/Platform.${{github.event.repository.name}}.TemplateLibrary.${{needs.get_package_info.outputs.version}}.nupkg"
           NuGetPackageUrl=$(echo "$NuGetPackageUrl" | tr '[:upper:]' '[:lower:]')
           NuGetPageStatus="$(curl -Is "$NuGetPackageUrl" | head -1)"
           StatusContents=( $NuGetPageStatus )
@@ -82,7 +81,7 @@ jobs:
           wget -O "$nuspec_direction/icon.png" https://raw.githubusercontent.com/linksplatform/Documentation/18469f4d033ee9a5b7b84caab9c585acab2ac519/doc/Avatar-rainbow-icon-64x64.png
 
           # Download TemplateLibrary.targets for the package
-          wget -O "$nuspec_direction/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.targets" https://raw.githubusercontent.com/linksplatform/Files/ed0dc702f52d56d80ea2f19c93df5cf2fdcbccbf/TemplateLibrary.targets
+          wget -O "$nuspec_direction/Platform.${{github.event.repository.name}}.TemplateLibrary.targets" https://raw.githubusercontent.com/linksplatform/Files/ed0dc702f52d56d80ea2f19c93df5cf2fdcbccbf/TemplateLibrary.targets
 
           # Update .nuspec file
           IFS=$'\n' #Set Separator.
@@ -92,7 +91,7 @@ jobs:
           unset file[-1] #Remove last element in array.
           file+=("  <files>")
           file+=("    <file src=\"icon.png\" target=\"images/icon.png\" />")
-          file+=("    <file src=\"Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.targets\" target=\"build\native\Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.targets\" />")
+          file+=("    <file src=\"Platform.${{github.event.repository.name}}.TemplateLibrary.targets\" target=\"build\native\Platform.${{github.event.repository.name}}.TemplateLibrary.targets\" />")
           for FILE in $files #Get all files on directory.
           do
             file+=("    <file src=\"$FILE\" target=\"lib\\native\\include\\$FILE\" />") #Append new files to array.
@@ -119,7 +118,7 @@ jobs:
           tag: "cpp_${{needs.get_package_info.outputs.version}}"
           name: "[C++] ${{needs.get_package_info.outputs.version}}"
           body: >
-            https://www.nuget.org/packages/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary/${{needs.get_package_info.outputs.version}}
+            https://www.nuget.org/packages/Platform.${{github.event.repository.name}}.TemplateLibrary/${{needs.get_package_info.outputs.version}}
             
             ${{needs.get_package_info.outputs.release_notes}}
   get_conan_package_info:
