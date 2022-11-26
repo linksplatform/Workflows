@@ -29,14 +29,17 @@ jobs:
         id: get_nuspec_path
         run: |
           nuspec_path="Platform.${{env.REPOSITORY_NAME}}/Platform.${{env.REPOSITORY_NAME}}.TemplateLibrary.nuspec"
+          echo "nuspec_path=${nuspec_path}"
           echo "nuspec_path=${nuspec_path}" >> $GITHUB_OUTPUT
       - name: Get version
         id: get_version
         run: |
           version=$(grep -Pzo "<version>[^<>]+</version>" "${{steps.get_nuspec_path.outputs.nuspec_path}}" | sed -e 's/<.\?[a-zA-Z]\+>//g' | tr -d '\0')
+          echo "version=${version}"
           echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Get release notes
         id: get_release_notes
         run: |
           release_notes=$(grep -Pzo "<releaseNotes>[^<>]+</releaseNotes>" "${{steps.get_nuspec_path.outputs.nuspec_path}}" | sed -e 's/<.\?[a-zA-Z]\+>//g' | tr -d '\0')
+          echo "release_notes=${release_notes}"
           echo "release_notes=${release_notes}" >> $GITHUB_OUTPUT
