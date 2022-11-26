@@ -35,6 +35,8 @@ jobs:
         id: get_version
         run: |
           version=$(grep -Pzo "<version>[^<>]+</version>" "${{steps.get_nuspec_path.outputs.nuspec_path}}" | sed -e 's/<.\?[a-zA-Z]\+>//g' | tr -d '\0')
+          echo "pwd=${pwd}"
+          echo "ls: $(ls)"
           echo "version=${version}"
           echo "version=${version}" >> $GITHUB_OUTPUT
       - name: Get release notes
