@@ -15,11 +15,11 @@ jobs:
       - name: Publish to the official conan repository
         uses: Minimonium/conan-request-action@master
         with:
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           packageName: ${{inputs.name}}
       - name: Publish to the linksplatform conan repository
         uses: Minimonium/conan-request-action@master
         with:
-          token: ${{ secrets.PERSONAL_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           packageName: ${{inputs.name}}
           upstreamOwner: 'linksplatform'
