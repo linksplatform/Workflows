@@ -1,12 +1,13 @@
 on:
   workflow_call:
+    inputs:
+      name:
+        required: true
+        type: string
         
 jobs:
-  get_conan_package_info:
-    uses: ./.github/workflows/get-cpp-conan-package-info.yml
   push_to_conan:
     runs-on: ubuntu-latest
-    needs: [get_conan_package_info]
     steps:
       - uses: actions/checkout@v1
         with:
@@ -15,10 +16,10 @@ jobs:
         uses: Minimonium/conan-request-action@master
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
-          packageName: ${{needs.get_conan_package_info.outputs.name}}
+          packageName: ${{inputs.name}}
       - name: Publish to the linksplatform conan repository
         uses: Minimonium/conan-request-action@master
         with:
           token: ${{ secrets.PERSONAL_TOKEN }}
-          packageName: ${{needs.get_conan_package_info.outputs.name}}
+          packageName: ${{inputs.name}}
           upstreamOwner: 'linksplatform'
