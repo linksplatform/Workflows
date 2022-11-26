@@ -61,14 +61,48 @@ jobs:
           submodules: true
       - name: Read package information
         run: |
-          export REPOSITORY_NAME=$(basename ${{ github.repository }})
-          wget "$SCRIPTS_BASE_URL/read_cpp_package_info.sh"
-          bash ./read_cpp_package_info.sh
-      - name: Publish NuGet package
-        run: |
-          export REPOSITORY_NAME=$(basename ${{ github.repository }})
-          wget "$SCRIPTS_BASE_URL/push-cpp-nuget.sh"
-          bash ./push-cpp-nuget.sh
+          sudo apt-get install nuget
+
+          CPP_PACKAGE_NUSPEC_DIRECTORY=$(dirname "${{needs.get_package_info.nuspec_path}}")
+
+          # Ensure NuGet package does not exist
+          NuGetPackageUrl="https://globalcdn.nuget.org/packages/Platform.$REPOSITORY_NAME.TemplateLibrary.${{needs.get_package_info.version}}.nupkg"
+          NuGetPackageUrl=$(echo "$NuGetPackageUrl" | tr '[:upper:]' '[:lower:]')
+          NuGetPageStatus="$(curl -Is "$NuGetPackageUrl" | head -1)"
+          StatusContents=( $NuGetPageStatus )
+          if [ "${StatusContents[1]}" == "200" ]; then
+            echo "NuGet with current version is already pushed."
+            exit 0
+          fi
+
+          # Download icon.png for the package
+          wget -O "$CPP_PACKAGE_NUSPEC_DIRECTORY/icon.png" https://raw.githubusercontent.com/linksplatform/Documentation/18469f4d033ee9a5b7b84caab9c585acab2ac519/doc/Avatar-rainbow-icon-64x64.png
+
+          # Download TemplateLibrary.targets for the package
+          wget -O "$CPP_PACKAGE_NUSPEC_DIRECTORY/Platform.$REPOSITORY_NAME.TemplateLibrary.targets" https://raw.githubusercontent.com/linksplatform/Files/ed0dc702f52d56d80ea2f19c93df5cf2fdcbccbf/TemplateLibrary.targets
+
+          # Update .nuspec file
+          IFS=$'\n' #Set Separator.
+          files=$(find $(dirname ${{needs.get_package_info.nuspec_path}}) | grep "\.h" | grep -v "bin" | grep -v "obj" | cut -c $(( $(echo $(dirname ${{needs.get_package_info.nuspec_path}}) | wc -m) + 1))-)
+          filename="${{needs.get_package_info.nuspec_path}}"
+          file=($(cat $filename)) #Read file by line in array
+          unset file[-1] #Remove last element in array.
+          file+=("  <files>")
+          file+=("    <file src=\"icon.png\" target=\"images/icon.png\" />")
+          file+=("    <file src=\"Platform.$REPOSITORY_NAME.TemplateLibrary.targets\" target=\"build\native\Platform.$REPOSITORY_NAME.TemplateLibrary.targets\" />")
+          for FILE in $files #Get all files on directory.
+          do
+            file+=("    <file src=\"$FILE\" target=\"lib\\native\\include\\$FILE\" />") #Append new files to array.
+          done
+          file+=("  </files>") #Append end for tag files.
+          file+=("</package>") #Append end for tag package.
+          printf '%s\n' "${file[@]}" > "$filename" #Write array by line to .nuspec file.
+
+          # Pack NuGet package by .nuspec file
+          nuget pack "${{needs.get_package_info.nuspec_path}}"
+
+          # Push NuGet package
+          nuget push ./**/*.nupkg -NoSymbols -Source https://api.nuget.org/v3/index.json -ApiKey "${{secrets.NUGETTOKEN}}" 
   get_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-package-info.yml@main
   publishRelease:
