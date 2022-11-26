@@ -1,24 +1,21 @@
 on:
   workflow_call:
     outputs:
-      package_name:
+      name:
         description: "The conan package name"
-        value: ${{ jobs.get_conan_package_info.outputs.package_name }}
+        value: ${{ jobs.get_conan_package_info.outputs.name }}
         
 env:
   REPOSITORY_NAME: $(basename ${{ github.repository }})
         
 jobs:
-  get_package_info:
-    uses: ./.github/workflows/get-cpp-package-info.yml
   get_conan_package_info:
-    needs: [get_package_info]
     runs-on: ubuntu-latest
     outputs: 
-      package_name: platform.$(echo ${{env.REPOSITORY_NAME}} | tr '[:upper:]' '[:lower:]')
+      package_name: ${{steps.get_name.outputs.name}}
     steps:
-      - name: Get package name
-        id: get_package_name
+      - name: Get name
+        id: get_name
         run: |
-          package_name="platform.$(echo ${{needs.get_package_info.outputs}} | tr '[:upper:]' '[:lower:]')"
-          echo "package_name=${package_name}" >> $GITHUB_OUTPUT
+          name="platform.$(echo ${{env.REPOSITORY_NAME}} | tr '[:upper:]' '[:lower:]')"
+          echo "name=${package_name}" >> $GITHUB_OUTPUT
