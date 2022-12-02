@@ -7,7 +7,6 @@ on:
         
 jobs:
   push_to_conan:
-    if: startsWith(github.ref, 'refs/tags/cpp_')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
