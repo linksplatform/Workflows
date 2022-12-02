@@ -59,6 +59,9 @@ jobs:
     outputs: 
       all_changed_files: ${{steps.get_changed_files.outputs.all_changed_files}}
     steps:
+      - uses: actions/checkout@v3
+        with:
+         fetch-depth: 0
       - id: get_changed_files
         uses: tj-actions/changed-files@v21
   pushToNuget:
