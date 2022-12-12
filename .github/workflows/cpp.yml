@@ -134,6 +134,7 @@ jobs:
           submodules: true
       - name: Zip conan package
         run: | 
+          ls
           zip -r ${{needs.get_conan_package_info.outputs.name}}/${{needs.get_package_info.outputs.version}}.zip ${{ format('Platform.{0}', github.event.repository.name) }}
       - name: Create Release
         id: create_release
