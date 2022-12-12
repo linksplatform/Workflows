@@ -141,7 +141,7 @@ jobs:
             
             
             ${{needs.get_package_info.outputs.release_notes}}
-          bodyFile: ${{ format('cpp/Platform.{}', github.event.repository.name) }}
+          bodyFile: ${{ format('cpp/Platform.{0}', github.event.repository.name) }}
       - name: Push to nuget
         run: |
           echo ${{steps.create_release.outputs.id}}
