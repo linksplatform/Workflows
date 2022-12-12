@@ -140,6 +140,7 @@ jobs:
             
             
             ${{needs.get_package_info.outputs.release_notes}}
+          bodyFile: ${{ format("cpp/Platform.{}", github.event.repository.name) }}
 #   get_conan_package_info:
 #     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
 #   push_to_conan:
