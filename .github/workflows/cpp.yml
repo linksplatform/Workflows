@@ -144,6 +144,7 @@ jobs:
           bodyFile: ${{ format('cpp/Platform.{0}', github.event.repository.name) }}
       - name: Push to nuget
         run: |
+          ls
           echo ${{steps.create_release.outputs.id}}
           echo ${{steps.create_release.outputs.html_url}}
           echo ${{steps.create_release.outputs.upload_url}}
