@@ -122,14 +122,19 @@ jobs:
 
           # Push NuGet package
           nuget push ./**/*.nupkg -NoSymbols -Source https://api.nuget.org/v3/index.json -ApiKey "${{secrets.NUGETTOKEN}}" 
+  get_conan_package_info:
+    uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
   publishRelease:
     runs-on: ubuntu-latest
-    needs: [test, get_package_info, get_changed_files]
+    needs: [test, get_package_info, get_changed_files, get_conan_package_info]
     if: ${{contains(needs.get_changed_files.outputs.all_changed_files, needs.get_package_info.outputs.nuspec_path)}}
     steps:
       - uses: actions/checkout@v1
         with:
           submodules: true
+      - name: Zip conan package
+        run: | 
+          zip -r ${{needs.get_conan_package_info.outputs.name}}/${{needs.get_package_info.outputs.version}}.zip ${{ format('Platform.{0}', github.event.repository.name) }}
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1.11.2
@@ -141,15 +146,13 @@ jobs:
             
             
             ${{needs.get_package_info.outputs.release_notes}}
-          bodyFile: ${{ format('Platform.{0}', github.event.repository.name) }}
+          artifactErrorsFailBuild: true
+          artifacts: ${{needs.get_conan_package_info.outputs.name}}/${{needs.get_package_info.outputs.version}}.zip
       - name: Push to nuget
         run: |
           echo ${{steps.create_release.outputs.id}}
           echo ${{steps.create_release.outputs.html_url}}
           echo ${{steps.create_release.outputs.upload_url}}
-
-#   get_conan_package_info:
-#     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
 #   push_to_conan:
 #     needs: [publishRelease, get_conan_package_info]
 #     uses: linksplatform/Workflows/.github/workflows/push-to-conan.yml@main
