@@ -134,13 +134,11 @@ jobs:
           submodules: true
       - name: Zip conan package
         run: | 
+          zip -r "${{needs.get_conan_package_info.outputs.name}}_${{needs.get_package_info.outputs.version}}.zip" "${{ format('Platform.{0}', github.event.repository.name) }}"
           echo "ls:"
           ls
           echo "ls end\n"
-          echo "zip output name: ${{needs.get_conan_package_info.outputs.name}}/${{needs.get_package_info.outputs.version}}.zip"
-          echo "Folder to zip: ${{ format('Platform.{0}', github.event.repository.name) }}"
-          zip -r "${{needs.get_conan_package_info.outputs.name}}_${{needs.get_package_info.outputs.version}}.zip" "${{ format('Platform.{0}', github.event.repository.name) }}"
-          ls
+          echo "Artifact pattern: ${{needs.get_conan_package_info.outputs.name}}_${{needs.get_package_info.outputs.version}}.zip"
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1.11.2
