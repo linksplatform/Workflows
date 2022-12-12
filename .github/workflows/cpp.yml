@@ -131,6 +131,7 @@ jobs:
         with:
           submodules: true
       - name: Create Release
+        id: create_release
         uses: ncipollo/release-action@v1.11.2
         with:
           tag: "cpp_${{needs.get_package_info.outputs.version}}"
@@ -141,6 +142,12 @@ jobs:
             
             ${{needs.get_package_info.outputs.release_notes}}
           bodyFile: ${{ format("cpp/Platform.{}", github.event.repository.name) }}
+      - name: Push to nuget
+        run: |
+          echo ${{steps.create_release.outputs.id}}
+          echo ${{steps.create_release.outputs.html_url}}
+          echo ${{steps.create_release.outputs.upload_url}}
+
 #   get_conan_package_info:
 #     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
 #   push_to_conan:
