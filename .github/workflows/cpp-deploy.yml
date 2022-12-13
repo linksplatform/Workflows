@@ -13,9 +13,7 @@ defaults:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-     - uses: linksplatform/Workflows/.github/workflows/cpp-test.yml@main
+    uses: linksplatform/Workflows/.github/workflows/cpp-test.yml@main
   get_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-package-info.yml@main
   get_changed_files:
