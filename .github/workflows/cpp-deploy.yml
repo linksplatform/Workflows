@@ -113,7 +113,7 @@ jobs:
           nuget pack "${{env.NUSPEC_PATH}}"
 
           # Push NuGet package
-          nuget push ./**/*.nupkg -NoSymbols -Source https://api.nuget.org/v3/index.json -ApiKey "${{secrets.NUGETTOKEN}}" 
+          nuget push ./**/*.nupkg -NoSymbols -Source https://api.nuget.org/v3/index.json -ApiKey "${{secrets.NUGET_TOKEN}}" 
   get_conan_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
   publishRelease:
