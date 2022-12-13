@@ -1,6 +1,10 @@
 name: Deploy new cpp version
 
-on: workflow_dispatch
+on:
+  workflow_call:
+    secrets:
+      NUGET_TOKEN:
+        required: true
 
 
 defaults:
