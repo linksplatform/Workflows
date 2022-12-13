@@ -2,8 +2,12 @@ name: Deploy new cpp version
 
 on:
   workflow_call:
+    inputs:
+      recipe_folder:
+        required: true
+        type: string
     secrets:
-      NUGET_TOKEN:
+      nuget_token:
         required: true
 
 
@@ -72,7 +76,7 @@ jobs:
           nuget pack "${{env.NUSPEC_PATH}}"
 
           # Push NuGet package
-          nuget push ./**/*.nupkg -NoSymbols -Source https://api.nuget.org/v3/index.json -ApiKey "${{secrets.NUGET_TOKEN}}" 
+          nuget push ./**/*.nupkg -NoSymbols -Source https://api.nuget.org/v3/index.json -ApiKey "${{secrets.nuget_token}}" 
   get_conan_package_info:
     uses: linksplatform/Workflows/.github/workflows/get-cpp-conan-package-info.yml@main
   publishRelease:
@@ -82,7 +86,8 @@ jobs:
       artifact_file_name: '${{needs.get_conan_package_info.outputs.name}}_${{needs.get_package_info.outputs.version}}.zip'
       tag: "cpp_${{needs.get_package_info.outputs.version}}"
     outputs:
-      release_artifact_url: 'https://github.com/linksplatform/${{github.event.repository.name}}/releases/${{env.tag}}/download/${{env.artifact_file_name}}'
+      artifact_url: 'https://github.com/linksplatform/${{github.event.repository.name}}/releases/${{env.tag}}/download/${{env.artifact_file_name}}'
+      artifact_sha256: 'https://github.com/linksplatform/${{github.event.repository.name}}/releases/${{env.tag}}/download/${{env.artifact_file_name}}'
     steps:
       - uses: actions/checkout@v1
         with:
@@ -91,6 +96,8 @@ jobs:
         id: zip_conan_package
         run: | 
           zip -r "${{env.artifact_file_name}}" "${{ format('Platform.{0}', github.event.repository.name) }}"
+          artifact_sha256=$(sha256sum "${{env.artifact_file_name}}" | cut -d " " -f 1)
+          echo "artifact_sha256=${artifact_sha256}" >> $GITHUB_OUTPUT
       - name: Create Release
         id: create_release
         uses: ncipollo/release-action@v1.11.2
@@ -104,11 +111,24 @@ jobs:
             ${{needs.get_package_info.outputs.release_notes}}
           artifactErrorsFailBuild: true
           artifacts: "cpp/${{env.artifact_file_name}}"
-#   push_to_conan:
-#     needs: [publishRelease, get_conan_package_info]
-#     uses: linksplatform/Workflows/.github/workflows/push-to-conan.yml@main
-#     with:
-#       name: ${{needs.get_conan_package_info.outputs.name}}
+  push_to_conan:
+    needs: [publishRelease, get_package_info, get_conan_package_info]
+    uses: linksplatform/Workflows/.github/workflows/push-to-conan.yml@main
+    with:
+      version: ${{needs.get_package_info.outputs.version}}
+      recipe-name: ${{needs.get_conan_package_info.outputs.recipe_name}}
+      recipe-folder: ${{inputs.recipe_folder}}
+      source-repository-name: 'conan-center-index'
+      source-repository-owner: 'linksplatform'
+      source-repository-branch: ${{needs.get_conan_package_info.outputs.recipe_name}}
+      destination-repository-name: 'conan-center-index'
+      destination-repository-owner: 'conan-io'
+      destination-repository-branch: main
+      url: ${{needs.publishRelease.outputs.artifact_url}}
+      sha256:  ${{needs.publishRelease.outputs.artifact_sha256}}
+      dependencies: 
+      pull-request-title:
+      pull-request-body:
 #   update_conan_dependants:
 #     runs-on: ubuntu-latest
 #     needs: [push_to_conan, get_conan_package_info]
@@ -122,9 +142,9 @@ jobs:
 #           token: ${{ secrets.PERSONAL_TOKEN }}
 #           organizationName: 'linksplatform'
 #           conanFilePath: 'cpp/conanfile.txt'
-#           commitMessageTemplate: 'Update ${{needs.get_conan_package_info.outputs.name}} dependency from {PREVIOUS_VERSION} to ${{needs.get_package_info.outputs.version}}'
+#           commitMessageTemplate: 'Update ${{needs.get_conan_package_info.outputs.recipe_name}} dependency from {PREVIOUS_VERSION} to ${{needs.get_package_info.outputs.version}}'
 #           sourceBranchName: 'main'
 #           destinationBranchName: 'main'
-#           conanFileReplaceableRegex: "${{needs.get_conan_package_info.outputs.name}}/\\(?<PREVIOUS_VERSION>\\d\\.\\d\\.\\d\\)"
-#           conanFileReplacement: '${{needs.get_conan_package_info.outputs.name}}/${{needs.get_package_info.outputs.version}}'
+#           conanFileReplaceableRegex: "${{needs.get_conan_package_info.outputs.recipe_name}}/\\(?<PREVIOUS_VERSION>\\d\\.\\d\\.\\d\\)"
+#           conanFileReplacement: '${{needs.get_conan_package_info.outputs.recipe_name}}/${{needs.get_package_info.outputs.version}}'
 #           shouldOpenPullRequest: 'false'
