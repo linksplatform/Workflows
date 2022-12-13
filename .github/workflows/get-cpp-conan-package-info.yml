@@ -14,6 +14,5 @@ jobs:
       - name: Get name
         id: get_name
         run: |
-          name="platform.$(echo ${{github.event.repository.name}} | tr '[:upper:]' '[:lower:]')"
-          echo "name=${name}"
-          echo "name=${name}" >> $GITHUB_OUTPUT
+          recipe_name="platform.$(echo ${{github.event.repository.name}} | tr '[:upper:]' '[:lower:]')"
+          echo "recipe_name=${recipe_name}" >> $GITHUB_OUTPUT
