@@ -6,7 +6,7 @@ on:
         type: string
         
 jobs:
-  push_to_conan:
+  publish_to_conan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
