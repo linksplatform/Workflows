@@ -6,6 +6,9 @@ on:
 defaults:
   run:
     working-directory: cpp
+    
+env:
+  PROFILE: "linksplatform"
 
 jobs:
   test:
@@ -20,12 +23,12 @@ jobs:
         run: pip install conan
       - name: Setup conan
         run: |
-          conan profile detect --name linksplatform
-          conan profile update settings.compiler=gcc linksplatform
-          conan profile update settings.compiler.version=11 linksplatform
-          conan profile update settings.compiler.libcxx=libstdc++11 linksplatform
-          conan profile update env.CXX=clang++ linksplatform
-          conan profile show linksplatform
+          conan profile detect --name ${{env.profile}}
+          conan config set profiles.${{env.profile}}.compiler=gcc linksplatform
+          conan config set profiles.${{env.profile}}.compiler.version=11
+          conan config set profiles.${{env.profile}}.compiler.libcxx=libstdc++11
+          conan config set profiles.${{env.profile}}.env.CXX=clang++
+          conan config get profiles.${{env.profile}}
       - name: Instll conan packages
         run: |
           if [ -f "install-local-conan-dependencies.sh" ]; then
