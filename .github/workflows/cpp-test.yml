@@ -23,12 +23,12 @@ jobs:
         run: pip install conan
       - name: Setup conan
         run: |
-          conan profile detect --name ${{env.profile}}
-          conan config set profiles.${{env.profile}}.compiler=gcc linksplatform
-          conan config set profiles.${{env.profile}}.compiler.version=11
-          conan config set profiles.${{env.profile}}.compiler.libcxx=libstdc++11
-          conan config set profiles.${{env.profile}}.env.CXX=clang++
-          conan config get profiles.${{env.profile}}
+          conan profile detect --name ${{env.PROFILE}}
+          conan config set profiles.${{env.PROFILE}}.compiler=gcc linksplatform
+          conan config set profiles.${{env.PROFILE}}.compiler.version=11
+          conan config set profiles.${{env.PROFILE}}.compiler.libcxx=libstdc++11
+          conan config set profiles.${{env.PROFILE}}.env.CXX=clang++
+          conan config get profiles.${{env.PROFILE}}
       - name: Instll conan packages
         run: |
           if [ -f "install-local-conan-dependencies.sh" ]; then
