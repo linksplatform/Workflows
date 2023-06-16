@@ -9,8 +9,9 @@ jobs:
   get_conan_package_info:
     runs-on: ubuntu-latest
     outputs: 
-      name: ${{ steps.set_name.outputs.name }}
+      name: ${{ steps.get_name.outputs.name }}
     steps:
-      - name: Set name
-        id: set_name
-        run: echo "::set-output name=name::platform.${{ github.event.repository.name | lower }}"
+      - name: Get name
+        id: get_name
+        run: |
+          echo "::set-output name=name::platform.$(echo ${{ github.event.repository.name }} | tr '[:upper:]' '[:lower:]')"
