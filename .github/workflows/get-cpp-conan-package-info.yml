@@ -14,4 +14,4 @@ jobs:
       - name: Get name
         id: get_name
         run: |
-          echo "::set-output name=name::platform.$(echo ${{ github.event.repository.name }} | tr '[:upper:]' '[:lower:]')"
+          echo "name=platform.$(echo ${{ github.event.repository.name }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
