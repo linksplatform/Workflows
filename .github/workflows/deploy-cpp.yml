@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [test, get_package_info, get_conan_package_info]
     env:
-      artifact_file_name: '${{needs.get_conan_package_info.outputs.name}}_${{needs.get_package_info.outputs.version}}.zip'
+      artifact_file_name: '${{needs.get_conan_package_info.outputs.recipe_name}}_${{needs.get_package_info.outputs.version}}.zip'
       tag: "cpp_${{needs.get_package_info.outputs.version}}"
     outputs:
       artifact_url: 'https://github.com/linksplatform/${{github.event.repository.name}}/releases/${{env.tag}}/download/${{env.artifact_file_name}}'
