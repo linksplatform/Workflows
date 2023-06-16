@@ -37,6 +37,6 @@ jobs:
           cmake_flags="-DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DLINKS_PLATFORM_TESTS=TRUE"
           cmake_build_dir="cmake-build-release"
           mkdir $cmake_build_dir && cd $cmake_build_dir
-          conan install .. -pr=linksplatform --build=missing
+          conan install .. --build=missing
           cmake .. "$cmake_flags"
           cmake --build .
