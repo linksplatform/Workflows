@@ -35,7 +35,7 @@ jobs:
         run: |
           ls
           CXX=clang++
-          cmake_flags="-DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DLINKS_PLATFORM_TESTS=TRUE"
+          cmake_flags="-DCMAKE_TOOLCHAIN_FILE=./conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DLINKS_PLATFORM_TESTS=TRUE"
           conan install . --build=missing
           cmake . "$cmake_flags"
           cmake --build .
