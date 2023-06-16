@@ -33,9 +33,9 @@ jobs:
           fi
       - name: Test and scan-build
         run: |
-          ls
           CXX=clang++
           cmake_flags="-DCMAKE_TOOLCHAIN_FILE=./conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DLINKS_PLATFORM_TESTS=TRUE"
           conan install . --build=missing
+          ls
           cmake . "$cmake_flags"
           cmake --build .
