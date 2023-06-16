@@ -3,7 +3,7 @@ on:
     outputs:
       name:
         description: "The conan package name"
-        value: ${{ jobs.get_conan_package_info.outputs.name }}
+        value: ${{ jobs.get_conan_package_info.outputs.recipe_name }}
         
 jobs:
   get_conan_package_info:
