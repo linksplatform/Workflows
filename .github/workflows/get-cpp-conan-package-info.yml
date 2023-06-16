@@ -9,7 +9,7 @@ jobs:
   get_conan_package_info:
     runs-on: ubuntu-latest
     outputs: 
-      name: ${{steps.get_name.outputs.name}}
+      name: ${{steps.get_name.outputs.recipe_name}}
     steps:
       - name: Get name
         id: get_name
