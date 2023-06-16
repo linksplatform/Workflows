@@ -3,16 +3,14 @@ on:
     outputs:
       name:
         description: "The conan package name"
-        value: ${{ jobs.get_conan_package_info.outputs.recipe_name }}
+        value: ${{ jobs.get_conan_package_info.outputs.name }}
         
 jobs:
   get_conan_package_info:
     runs-on: ubuntu-latest
     outputs: 
-      name: ${{steps.get_name.outputs.recipe_name}}
+      name: ${{ steps.set_name.outputs.name }}
     steps:
-      - name: Get name
-        id: get_name
-        run: |
-          recipe_name="platform.$(echo ${{github.event.repository.name}} | tr '[:upper:]' '[:lower:]')"
-          echo "recipe_name=${recipe_name}" >> $GITHUB_OUTPUT
+      - name: Set name
+        id: set_name
+        run: echo "::set-output name=name::platform.${{ github.event.repository.name | lower }}"
