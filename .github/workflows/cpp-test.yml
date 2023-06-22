@@ -24,6 +24,7 @@ jobs:
       - name: Setup conan
         run: |
           conan profile detect
+          sed -i '5d' ~/.conan2/profiles/default
       - name: Instll conan packages
         run: |
           if [ -f "install-local-conan-dependencies.sh" ]; then
