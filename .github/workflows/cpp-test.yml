@@ -37,5 +37,5 @@ jobs:
           CXX=clang++
           conan install . --build=missing
           ls
-          cmake . -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -DLINKS_PLATFORM_TESTS=TRUE
+          cmake . -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -DLINKS_PLATFORM_TESTS=TRUE
           cmake --build .
