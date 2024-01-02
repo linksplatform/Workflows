@@ -63,7 +63,7 @@ jobs:
         with:
          fetch-depth: 0
       - id: get_changed_files
-        uses: tj-actions/changed-files@v21
+        uses: tj-actions/changed-files@v41
   pushToNuget:
     runs-on: ubuntu-latest
     needs: [test, get_package_info, get_changed_files]
