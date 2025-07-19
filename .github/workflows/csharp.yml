@@ -25,7 +25,7 @@
 #           submodules: true
 #       - name: Test
 #         run: |
-#           dotnet test -c Release -f net7
+#           dotnet test -c Release -f net8
 #   pushNuGetPackageToGitHubPackageRegistry:
 #     needs: test
 #     runs-on: ubuntu-latest
