@@ -1,0 +1,16 @@
+name: Deploy C# Package
+
+on:
+  push:
+    branches: main 
+    paths:
+      - 'csharp/**'
+      - '.github/workflows/csharp.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: linksplatform/Workflows/.github/workflows/csharp.yml@main
+    secrets:
+      NUGET_TOKEN: ${{ secrets.NUGET_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
